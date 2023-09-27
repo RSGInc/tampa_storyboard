@@ -1,0 +1,11 @@
+name: Tampa-Storyboard
+title: Tampa-Storyboard
+username:
+account: rsginc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9562933
+bundleId: 7735858
+url: https://rsginc.shinyapps.io/Tampa-Storyboard/
+asMultiple: FALSE
+asStatic: FALSE

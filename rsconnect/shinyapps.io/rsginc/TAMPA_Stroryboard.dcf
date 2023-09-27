@@ -1,0 +1,12 @@
+name: TAMPA_Stroryboard
+title: TAMPA_Stroryboard
+username: rsginc
+account: rsginc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9652474
+bundleId: 7596666
+url: https://rsginc.shinyapps.io/TAMPA_Stroryboard/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
