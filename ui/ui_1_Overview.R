@@ -34,7 +34,7 @@ tabPanel("Overview",
                       linebreaks(2),
                       img(src='RSG Logo.jpg',  height = 80, width = 250),
                       linebreaks(2),
-                      h4(tags$p(Text_Intro_bottom, tags$a(href="https://github.com/RSGInc/tampa_mobility/tree/main", "Github"))),
+                      h4(tags$p(Text_Intro_bottom, tags$a(href="https://github.com/RSGInc/tampa_storyboard", "Github"))),
                       linebreaks(2),
                       h4(Text_Intro_app_version, style="font-weight: bold")
                   )
@@ -48,36 +48,35 @@ tabPanel("Overview",
               column(width=6,
                      box(width=12,
                          h2("Information on Github Repository"),
-                         h4(tags$p('This project involved the development of analytical programming code for a variety of tasks. The full code can be found within a repository on ', tags$a(href="https://github.com/RSGInc/tampa_mobility/tree/main", "Github."),"This respository contains all of the code related to both the Shiny
-                                                             dashboard itself and the data processing scripts that were developed to produce the data that is visualized in this tool. The repository contains the following sections.")),
+                         h4(tags$p('This project involved the development of analytical programming code for a variety of tasks. The full code can be found within a repository on ',
+                         tags$a(href="https://github.com/RSGInc/tampa_storyboard", "Github."),"This respository contains all of the code related to the Shiny
+                                                             dashboard. The repository contains the following sections.")),
                          linebreaks(1),
-                         h4("https://github.com/RSGInc/tampa_mobility"),
+                         h3("Github Url"),
                          linebreaks(1),
-                         h3("configs"),
-                         h4("Configuration code required for data processing of rMove and Replica data"),
+                         h4("https://github.com/RSGInc/tampa_storyboard"),
                          linebreaks(1),
-                         h3("dashboard"),
-                         h4("The full code for the Shiny dashboard. This folder can be used in a stand alone fashion to run the shiny dashboard locally using Rstudio. It also contains processed data that was produced with
-                            the raw data processing scripts for direct use in the dashboard."),
+                         h3("data"),
+                         h4("All of the data that is used within the dashboard. These summarized datasets are the result of significant processing of raw data by RSG."),
                          linebreaks(1),
-                         h3("dev_feature"),
-                         h4("This contains all of the python scripts used for processing of raw data."),
+                         h3("server"),
+                         h4("This folder contains the 'server' side files of the dashboard, which contains all of the reactive dashboard logic. Each server file is associated with a ui file in the UI folder."),
                          linebreaks(1),
-                         h3("intake"),
-                         h4("Specific python scripts for processing big data."),
+                         h3("ui"),
+                         h4("This folder contains the 'ui' files of the dashboard, which contains all of code related to the user interface. Each ui file is associated with a server file in the UI folder."),
                          linebreaks(1),
-                         h3("scratch"),
-                         h4("Experimental scripts that were used during the data exploration process."),
+                         h3("www"),
+                         h4("Static files"),
                          linebreaks(1),
-                         h3("scripts"),
-                         h4("Data processing scripts that produce key data summaries."),
+                         h3("app.R"),
+                         h4("This file is used to organize all pieces of the dashboard. Run this file in rstudio to launch the dashboard on a local computer."),
                          linebreaks(1),
-                         h3("utils"),
-                         h4("Additional configuration files for the data processing scripts.")
+                         h3("data_import.R"),
+                         h4("This is ran in the background to load all of the necessary data.")
                      )
               ), 
               column(width=6,
-                     img(src='github.png',  height = 600, width = 650) # include page main photograph
+                     img(src='github.png',  height = 600, width = 680) # include page main photograph
               )
             )
 )

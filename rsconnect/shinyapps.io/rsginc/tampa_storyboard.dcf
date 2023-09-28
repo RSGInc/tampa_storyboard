@@ -1,0 +1,12 @@
+name: tampa_storyboard
+title: tampa_storyboard
+username: rsginc
+account: rsginc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10015246
+bundleId: 7736197
+url: https://rsginc.shinyapps.io/tampa_storyboard/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

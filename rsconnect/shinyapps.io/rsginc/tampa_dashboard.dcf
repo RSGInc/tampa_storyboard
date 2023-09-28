@@ -1,0 +1,12 @@
+name: tampa_dashboard
+title: tampa_dashboard
+username: rsginc
+account: rsginc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10015313
+bundleId: 7736221
+url: https://rsginc.shinyapps.io/tampa_dashboard/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

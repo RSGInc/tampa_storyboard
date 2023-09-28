@@ -5,7 +5,7 @@ account: rsginc
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9562933
-bundleId: 7735858
+bundleId: 7736257
 url: https://rsginc.shinyapps.io/Tampa-Storyboard/
 asMultiple: FALSE
 asStatic: FALSE
