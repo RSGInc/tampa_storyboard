@@ -4,9 +4,41 @@
 # Begin to develop on 08-01-2023
 # latest update: 09-28-2023 11:28 by Kyeongsu Kim; 
 
+rm(list=ls())
 
 source(file.path(getwd(), "data_import.R"))
-# library("formattable")
+
+library(tidyverse)
+library(data.table)
+library(leaflet)
+library(plotly)
+library(readr)
+library(tigris)
+library(sf)
+library(sfarrow)
+library(arrow)
+library(shiny)
+library(shinyjs)
+library(shinyalert)
+library(shinycssloaders)
+library(shinydashboard)
+library(shinyWidgets)
+library(shinyFiles)
+library(htmltools)
+library(htmlwidgets)
+library(geojsonio)
+library(mapview)
+library(RColorBrewer)
+library(BAMMtools)
+library(scales)
+library(Rfast)
+library(DT)
+library(reactable)
+library(reactablefmtr)
+library(purrr)
+library(readxl)
+library(mltools)
+library(formattable)
 
 Main_Page = function(){
   tagList(

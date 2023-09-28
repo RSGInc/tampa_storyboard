@@ -2,8 +2,11 @@
 # Developed by Kyeongsu Kim and Reid Haefer at RSG
 # latest update: 09-28-2023 11:28 by Kyeongsu Kim; 
 #  - fixed the deploying error issue caused by spatial dataframe CRS consistency issue,
-#  -- make sure to apply st_crs for reading files by sf packages or binary file formated by sf package. 
+#  -- make sure to apply st_crs for reading files by sf packages or binary file formatted by sf package. 
 #  -- for file read by 'sp' package or 'geojsonio' needs to apply "st_as_sf(crs=4326)", not st_crs
+#  -- as an alternative, use 'geojsonsf' package, and use geojson_sf and apply st_crs.
+#  - add original package name before a function. e.g:: geojsonio::geojson_read
+
 
 source(file.path("config_variables.R"))
 
@@ -30,7 +33,6 @@ gis_POI     = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, "gis_POI.rds")) %>% st_
 gis_cengeo19  = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_OD_TOTAL_GIS_DATA_NAME_2019))
 gis_cengeo22  = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_OD_TOTAL_GIS_DATA_NAME_2022))
 st_crs(gis_cengeo19) = 4326; st_crs(gis_cengeo22) = 4326
-st_crs(gis_CPlace)
 st_crs(gis_BG)  = 4326; st_crs(gis_TAZ)  = 4326; st_crs(gis_POI)  = 4326
 
 # to get lat/lon for zoom-in set in 10.poi
@@ -117,7 +119,6 @@ spend_county = readRDS(file.path("data/reid_data/spending/spend_county.rds"))
 county_point = geojsonio::geojson_read("data/gis/county_point.geojson", what="sp")%>% st_as_sf(crs=4326)
 states_point = geojsonio::geojson_read("data/gis/states_point.geojson", what="sp")%>% st_as_sf(crs=4326)
 tracts_point = geojsonio::geojson_read("data/gis/tracts_point.geojson", what="sp")%>% st_as_sf(crs=4326)
-st_crs(county_point) = 4326; st_crs(states_point) = 4326; st_crs(tracts_point) = 4326
 
 
 #county= geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county.geojson"), what="sp") %>% st_as_sf(crs=4326)
@@ -135,7 +136,6 @@ gis_d7   = geojsonio::geojson_read(file.path("data/gis/d7_study_boundary.geojson
   mutate(d7="yes") %>%
   mutate(POI_ID="D7", POI_Description="D7") %>%
   select(POI_ID,POI_Description)
-# st_crs(gis_d7) = 4326; 
 
 gis_POI_D7 <- bind_rows(
   gis_POI %>% mutate(POI_ID=as.character(POI_ID)) %>% select(POI_ID,POI_Description),
