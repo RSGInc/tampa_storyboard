@@ -1,5 +1,5 @@
 # TAMPA Mobility Dashboard. Config_Variables.R
-# Developed by Kyeongsu Kim, Reid Haefer, Matt Landis at RSG
+# Developed by Kyeongsu Kim and Reid Haefer at RSG
 
 # source(file.path(getwd(), "data_import.R"))
 
@@ -33,15 +33,6 @@ poi_traveler_type_choices_o  = paste0(poi_traveler_type_choices, "_o")
 poi_traveler_type_choices_d  = paste0(poi_traveler_type_choices, "_d")
 
 od_selection_choices         = c("Origin", "Destination")
-
-# to be used for "data_import.R" file. same names/path info in "data_preparation.R" --------
-#R package required 
-SYSTEM_PKGS <- c("tidyverse", "data.table", "leaflet", "plotly", "tigris", "sf", "sfarrow", "arrow" , 'shiny',
-                 'shinyjs', 'shinyalert', 'shinycssloaders', 'shinydashboard', 'shinyWidgets', 'shinyFiles',
-                 'htmltools', 'htmlwidgets', 'geojsonio', 'mapview', 'RColorBrewer', 'scales', 'Rfast', 'DT', 
-                 'BAMMtools', 'reactable', 'reactablefmtr', 'purrr', 'readxl', 'mltools', 'DT', 'formattable')
-
-lapply(SYSTEM_PKGS, require, character.only = TRUE)    # Load multiple packages
 
 SYSTEM_APP_PATH = getwd()
 # app input data file names --------

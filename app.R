@@ -1,15 +1,12 @@
 # TAMPA Mobility Dashboard 
-# Developed by Kyeongsu Kim, Reid Haefer, Matt Landis at RSG
+# Developed by Kyeongsu Kim and Reid Haefer at RSG
 # Original Framework by Reid, app_original.R, is stored in Archives 
-# Begin to develop on 08/01/2023
-# Latest Update on 08/21/2023 
-
-# To-do list 
-# QA/QC of the tool functionality
+# Begin to develop on 08-01-2023
+# latest update: 09-28-2023 11:28 by Kyeongsu Kim; 
 
 
 source(file.path(getwd(), "data_import.R"))
-library("formattable")
+# library("formattable")
 
 Main_Page = function(){
   tagList(

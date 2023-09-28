@@ -1,8 +1,19 @@
 # TAMPA Mobility Dashboard. Data Import.R
 # Developed by Kyeongsu Kim and Reid Haefer at RSG
+# latest update: 09-28-2023 11:28 by Kyeongsu Kim; 
+#  - fixed the deploying error issue caused by spatial dataframe CRS consistency issue,
+#  -- make sure to apply st_crs for reading files by sf packages or binary file formated by sf package. 
+#  -- for file read by 'sp' package or 'geojsonio' needs to apply "st_as_sf(crs=4326)", not st_crs
 
-rm(list=ls())
 source(file.path("config_variables.R"))
+
+#R package required 
+SYSTEM_PKGS <- c("tidyverse", "data.table", "leaflet", "plotly", "tigris", "sf", "sfarrow", "arrow" , 'shiny',
+                 'shinyjs', 'shinyalert', 'shinycssloaders', 'shinydashboard', 'shinyWidgets', 'shinyFiles',
+                 'htmltools', 'htmlwidgets', 'geojsonio', 'mapview', 'RColorBrewer', 'scales', 'Rfast', 'DT', 
+                 'BAMMtools', 'reactable', 'reactablefmtr', 'purrr', 'readxl', 'mltools', 'formattable')
+
+invisible(lapply(SYSTEM_PKGS, require, character.only = TRUE))    # Load multiple packages
 
 options(scipen=999)
 options(digits = 6)
@@ -18,8 +29,9 @@ gis_BG      = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, "gis_BG.rds")) %>% st_t
 gis_POI     = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, "gis_POI.rds")) %>% st_transform(4326)
 gis_cengeo19  = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_OD_TOTAL_GIS_DATA_NAME_2019))
 gis_cengeo22  = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_OD_TOTAL_GIS_DATA_NAME_2022))
-st_crs(gis_cengeo19) = 4326
-st_crs(gis_cengeo22) = 4326
+st_crs(gis_cengeo19) = 4326; st_crs(gis_cengeo22) = 4326
+st_crs(gis_CPlace)
+st_crs(gis_BG)  = 4326; st_crs(gis_TAZ)  = 4326; st_crs(gis_POI)  = 4326
 
 # to get lat/lon for zoom-in set in 10.poi
 lon = map_dbl(gis_POI$geom, ~st_point_on_surface(.x)[[1]])
@@ -30,10 +42,7 @@ poi_latlon = data.frame(poi_name, lon, lat); rm(lon, lat, poi_name)
 
 ## POI flows to be merged with o_and_d_tatals tables -----------
 gis_d7_edge19 = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_NETWORK_D7_EDGES_DATA_NAME_2019))
-st_crs(gis_d7_edge19) = 4326
 gis_d7_edge22 = readRDS(file.path(APP_INPUT_GIS_DATA_PATH, APP_INPUT_NETWORK_D7_EDGES_DATA_NAME_2022))
-st_crs(gis_d7_edge22) = 4326
-
 
 APP_INPUT_DATA_DIR_NAME = "data"
 APP_INPUT_DATA_PATH     = file.path(SYSTEM_APP_PATH, APP_INPUT_DATA_DIR_NAME)
@@ -98,36 +107,35 @@ vmt_per_capita_2022 = APP_INPUT_TRIP_CHARACTERISTIC_FILELIST[names(APP_INPUT_TRI
 # zone_choices[which(zone_choices %in% "Tropicana Stadium")] = "Tropicana Field"
 
 
- 
+
 # #### Reid import ####
 
 # spend data ----------
 spend_tract  = readRDS(file.path("data/reid_data/spending/spend_tract.rds"))
 spend_county = readRDS(file.path("data/reid_data/spending/spend_county.rds"))
 
-county_point = geojson_read("data/gis/county_point.geojson", what="sp") %>% st_as_sf(crs=4326) 
+county_point = geojsonio::geojson_read("data/gis/county_point.geojson", what="sp")%>% st_as_sf(crs=4326)
+states_point = geojsonio::geojson_read("data/gis/states_point.geojson", what="sp")%>% st_as_sf(crs=4326)
+tracts_point = geojsonio::geojson_read("data/gis/tracts_point.geojson", what="sp")%>% st_as_sf(crs=4326)
+st_crs(county_point) = 4326; st_crs(states_point) = 4326; st_crs(tracts_point) = 4326
 
-states_point = geojson_read("data/gis/states_point.geojson", what="sp") %>% st_as_sf(crs=4326) 
-tracts_point = geojson_read("data/gis/tracts_point.geojson", what="sp") %>% st_as_sf(crs=4326)
 
-
-#county= geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county.geojson"), what="sp") %>% st_as_sf(crs=4326)
-county_point= geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
-
-gis_state   = geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "states.geojson"), what="sp") %>% st_as_sf(crs=4326)
-
-tract_spend_point   = geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tract_spend_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
-
+#county= geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county.geojson"), what="sp") %>% st_as_sf(crs=4326)
+# county_point= geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
+gis_state   = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "states.geojson"), what="sp") %>% st_as_sf(crs=4326)
+tract_spend_point   = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tract_spend_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
+# st_crs(gis_state) = 4326; st_crs(tract_spend_point) = 4326; 
 # sf::sf_use_s2(FALSE)
-# gis_d7   = geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
+# gis_d7   = geojsonio::geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
 #   summarise() %>% mutate(d7="yes") %>%
 #   mutate(POI_ID="D7", POI_Description="D7") %>%
 #   select(POI_ID,POI_Description)
 
-gis_d7   = geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
+gis_d7   = geojsonio::geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
   mutate(d7="yes") %>%
   mutate(POI_ID="D7", POI_Description="D7") %>%
   select(POI_ID,POI_Description)
+# st_crs(gis_d7) = 4326; 
 
 gis_POI_D7 <- bind_rows(
   gis_POI %>% mutate(POI_ID=as.character(POI_ID)) %>% select(POI_ID,POI_Description),
@@ -136,13 +144,12 @@ gis_POI_D7 <- bind_rows(
 
 
 
-#tracts = geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tracts_FL.geojson"), what="sp") %>% st_as_sf(crs=4326) 
+#tracts = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tracts_FL.geojson"), what="sp") %>% st_as_sf(crs=4326) 
 
 vis_lbs_home_d7_state_df <- arrow::read_parquet("data/reid_data/vis_lbs_home_d7_state_df.parquet")
-
 vis_lbs_home_state<- readRDS("data/reid_data/vis_lbs_home_state.rds")
 
-#lu<- arrow::read_parquet("data/reid_data/land_use.parquet")
+#lu<- arrow::arrow::read_parquet("data/reid_data/land_use.parquet")
 
 #vis_bg_sf<- readRDS("data/reid_data/vis_bg_sf.rds")
 
@@ -151,9 +158,8 @@ vis_lbs_home_state<- readRDS("data/reid_data/vis_lbs_home_state.rds")
 #service_pop<- arrow::read_parquet("data/reid_data/service_pop.parquet")
 
 #commercial vehicles
-tod_all<- read_parquet("data/reid_data/tod_all.parquet")
-
-trip_all<- read_parquet("data/reid_data/trip_all.parquet")
+tod_all<- arrow::read_parquet("data/reid_data/tod_all.parquet")
+trip_all<- arrow::read_parquet("data/reid_data/trip_all.parquet")
 
 #geo data
 com_veh_geo<- bind_rows(
@@ -164,27 +170,26 @@ com_veh_geo<- bind_rows(
 
 ## resident home location
 
-res_data <- read_parquet("data/reid_data/res_loc_attributes.parquet")%>%
+res_data <- arrow::read_parquet("data/reid_data/res_loc_attributes.parquet")%>%
   mutate(poi_name=case_when(is.na(poi_name) ~ "D7", TRUE ~ as.character(poi_name)))
 
-res_work_loc<- read_parquet("data/reid_data/res_work_locations.parquet") %>%
+res_work_loc<- arrow::read_parquet("data/reid_data/res_work_locations.parquet") %>%
   mutate(poi_name=case_when(is.na(poi_name) ~ "D7", TRUE ~ as.character(poi_name)))
 
 ############
 
 ### employee location
 
-worker_data <- read_parquet("data/reid_data/worker_loc_attributes.parquet")%>%
+worker_data <- arrow::read_parquet("data/reid_data/worker_loc_attributes.parquet")%>%
   mutate(poi_name=case_when(is.na(poi_name) ~ "D7", TRUE ~ as.character(poi_name)))
 
-worker_home_loc<-read_parquet("data/reid_data/worker_home_locations.parquet")%>%
+worker_home_loc<-arrow::read_parquet("data/reid_data/worker_home_locations.parquet")%>%
   mutate(poi_name=case_when(is.na(poi_name) ~ "D7", TRUE ~ as.character(poi_name)))
 
 
 ## visitor location
 
 vis_attributes <-arrow::read_parquet("data/reid_data/vis_loc_attributes.parquet")
-
 vis_home_loc_df<-arrow::read_parquet("data/reid_data/vis_home_loc_df.parquet")
 
 ################
@@ -208,23 +213,19 @@ vis_home_loc_df<-arrow::read_parquet("data/reid_data/vis_home_loc_df.parquet")
 
 ### COVID
 
-covid_wfh<-read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_wfh")
-
-covid_wfh2<-read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_wfh2")
-
-covid_pop<-read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_pop")
-
-covid_transit<-read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_transit")
-
-covid_vis<-read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_vis_est")
+covid_wfh<-readxl::read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_wfh")
+covid_wfh2<-readxl::read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_wfh2")
+covid_pop<-readxl::read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_pop")
+covid_transit<-readxl::read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_transit")
+covid_vis<-readxl::read_excel("data/reid_data/Tampa_Survey_Report_Storyboard_Mockup_v2.xlsx", sheet="covid_vis_est")
 
 ### service population
 
-serv_pop_lu <- read_parquet("data/reid_data/serv_pop_lu.parquet") %>%
+serv_pop_lu <- arrow::read_parquet("data/reid_data/serv_pop_lu.parquet") %>%
   mutate(POI=case_when(POI %in% c("Florida District 7","Florida") ~ "D7", 
                        POI %in% c("Crystal River") ~ "Crystal River Wildlife Areas", 
                        TRUE ~ as.character(POI)))
 
 ## land use
-lu<- read_parquet("data/reid_data/land_use.parquet")
+lu<- arrow::read_parquet("data/reid_data/land_use.parquet")
 
