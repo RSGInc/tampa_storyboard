@@ -14,7 +14,7 @@ source(file.path("config_variables.R"))
 SYSTEM_PKGS <- c("tidyverse", "data.table", "leaflet", "plotly", "tigris", "sf", "sfarrow", "arrow" , 'shiny',
                  'shinyjs', 'shinyalert', 'shinycssloaders', 'shinydashboard', 'shinyWidgets', 'shinyFiles',
                  'htmltools', 'htmlwidgets', 'geojsonio', 'mapview', 'RColorBrewer', 'scales', 'Rfast', 'DT', 
-                 'BAMMtools', 'reactable', 'reactablefmtr', 'purrr', 'readxl', 'mltools', 'formattable')
+                 'BAMMtools', 'reactable', 'reactablefmtr', 'purrr', 'readxl', 'mltools', 'formattable', 'geojsonsf')
 
 invisible(lapply(SYSTEM_PKGS, require, character.only = TRUE))    # Load multiple packages
 
@@ -116,23 +116,26 @@ vmt_per_capita_2022 = APP_INPUT_TRIP_CHARACTERISTIC_FILELIST[names(APP_INPUT_TRI
 spend_tract  = readRDS(file.path("data/reid_data/spending/spend_tract.rds"))
 spend_county = readRDS(file.path("data/reid_data/spending/spend_county.rds"))
 
-county_point = geojsonio::geojson_read("data/gis/county_point.geojson", what="sp")%>% st_as_sf(crs=4326)
-states_point = geojsonio::geojson_read("data/gis/states_point.geojson", what="sp")%>% st_as_sf(crs=4326)
-tracts_point = geojsonio::geojson_read("data/gis/tracts_point.geojson", what="sp")%>% st_as_sf(crs=4326)
+county_point = geojsonsf::geojson_sf("data/gis/county_point.geojson")
+states_point = geojsonsf::geojson_sf("data/gis/states_point.geojson")
+tracts_point = geojsonsf::geojson_sf("data/gis/tracts_point.geojson")
+st_crs(county_point) = 4326; st_crs(states_point) = 4326; st_crs(tracts_point) = 4326; 
 
 
-#county= geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county.geojson"), what="sp") %>% st_as_sf(crs=4326)
-# county_point= geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "county_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
-gis_state   = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "states.geojson"), what="sp") %>% st_as_sf(crs=4326)
-tract_spend_point   = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tract_spend_point.geojson"), what="sp") %>% st_as_sf(crs=4326)
-# st_crs(gis_state) = 4326; st_crs(tract_spend_point) = 4326; 
+#county= geojsonsf::geojson_sf(file.path(APP_INPUT_GIS_DATA_PATH, "county.geojson"))
+# county_point= geojsonsf::geojson_sf(file.path(APP_INPUT_GIS_DATA_PATH, "county_point.geojson"))
+gis_state   = geojsonsf::geojson_sf(file.path(APP_INPUT_GIS_DATA_PATH, "states.geojson"))
+tract_spend_point   = geojsonsf::geojson_sf(file.path(APP_INPUT_GIS_DATA_PATH, "tract_spend_point.geojson"))
+st_crs(gis_state) = 4326; st_crs(tract_spend_point) = 4326;
 # sf::sf_use_s2(FALSE)
-# gis_d7   = geojsonio::geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
+# gis_d7   = geojsonsf::geojson_sf(file.path("data/gis/d7_study_boundary.geojson")) %>%
 #   summarise() %>% mutate(d7="yes") %>%
 #   mutate(POI_ID="D7", POI_Description="D7") %>%
 #   select(POI_ID,POI_Description)
 
-gis_d7   = geojsonio::geojson_read(file.path("data/gis/d7_study_boundary.geojson"), what="sp") %>% st_as_sf(crs=4326) %>%
+gis_d7   = geojsonsf::geojson_sf(file.path("data/gis/d7_study_boundary.geojson"))
+st_crs(gis_d7) = 4326
+gis_d7 = gis_d7 %>%
   mutate(d7="yes") %>%
   mutate(POI_ID="D7", POI_Description="D7") %>%
   select(POI_ID,POI_Description)
@@ -144,7 +147,7 @@ gis_POI_D7 <- bind_rows(
 
 
 
-#tracts = geojsonio::geojson_read(file.path(APP_INPUT_GIS_DATA_PATH, "tracts_FL.geojson"), what="sp") %>% st_as_sf(crs=4326) 
+#tracts = geojsonsf::geojson_sf(file.path(APP_INPUT_GIS_DATA_PATH, "tracts_FL.geojson")) 
 
 vis_lbs_home_d7_state_df <- arrow::read_parquet("data/reid_data/vis_lbs_home_d7_state_df.parquet")
 vis_lbs_home_state<- readRDS("data/reid_data/vis_lbs_home_state.rds")
